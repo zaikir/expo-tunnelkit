@@ -10,11 +10,21 @@ public class ExpoTunnelkitModule: Module {
 
   private var vpn: OpenVPNProvider?
 
+  private func ensureSetup() throws {
+    if self.keychain == nil || self.vpn == nil {
+      throw Exception(
+        name: "Invalid configuration",
+        description: "Call setup method first"
+      )
+    }
+  }
+
   @objc private func VPNStatusDidChange(notification _: NSNotification) {
     sendEvent("VPNStatusDidChange", ["status": vpn?.status.rawValue])
   }
 
   //  MARK: Expo Module definition
+
   public func definition() -> ModuleDefinition {
     Name("ExpoTunnelkit")
 
@@ -40,20 +50,22 @@ public class ExpoTunnelkitModule: Module {
 
     AsyncFunction("connect") { (config: String, hostname: String, username: String, password: String, promise: Promise) in
       do {
+        try ensureSetup()
+
         let credentials = OpenVPN.Credentials(username, password)
         let configuration = try Configuration.make(configString: config, hostname: hostname)
-        try self.keychain.set(password: credentials.password, for: credentials.username, context: self.tunnelIdentifier)
+        try self.keychain!.set(password: credentials.password, for: credentials.username, context: self.tunnelIdentifier!)
 
         let proto = try configuration.generatedTunnelProtocol(
-          withBundleIdentifier: self.tunnelIdentifier,
-          appGroup: self.appGroup,
-          context: self.tunnelIdentifier,
+          withBundleIdentifier: self.tunnelIdentifier!,
+          appGroup: self.appGroup!,
+          context: self.tunnelIdentifier!,
           username: credentials.username
         )
 
-        let vpnConfiguration = NetworkExtensionVPNConfiguration(title: self.configurationName, protocolConfiguration: proto, onDemandRules: [])
+        let vpnConfiguration = NetworkExtensionVPNConfiguration(title: self.configurationName!, protocolConfiguration: proto, onDemandRules: [])
 
-        self.vpn.reconnect(configuration: vpnConfiguration) { error in
+        self.vpn!.reconnect(configuration: vpnConfiguration) { error in
           if let error = error {
             promise.reject(
               Exception(
@@ -77,12 +89,16 @@ public class ExpoTunnelkitModule: Module {
     }
 
     AsyncFunction("disconnect") { (promise: Promise) in
-      self.vpn.disconnect(completionHandler: nil)
+      try ensureSetup()
+
+      self.vpn!.disconnect(completionHandler: nil)
       promise.resolve()
     }
 
     Function("getVpnStatus") { () in
-      self.vpn.status
+      try ensureSetup()
+
+      self.vpn!.status
     }
   }
 }
