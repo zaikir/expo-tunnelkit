@@ -1,9 +1,9 @@
 import {
-    ConfigPlugin,
-    withDangerousMod,
-    withEntitlementsPlist,
-    withPodfile,
-    withXcodeProject,
+  ConfigPlugin,
+  withDangerousMod,
+  withEntitlementsPlist,
+  withPodfile,
+  withXcodeProject,
 } from 'expo/config-plugins';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -301,10 +301,12 @@ export default withTunnelKit;
 function getModulePath() {
   let modulePath: string = '';
   try {
-    modulePath = path.dirname(require.resolve('expo-tunnelkit/package.json'));
+    modulePath = path.dirname(
+      require.resolve('@kirz/expo-tunnelkit/package.json'),
+    );
   } catch {
     console.error(
-      `Couldn't find the package "expo-tunnelkit". Falling back to the local filesystem.`,
+      `Couldn't find the package "@kirz/expo-tunnelkit". Falling back to the local filesystem.`,
     );
     modulePath = '../';
   }
