@@ -1,4 +1,0 @@
-module CTunnelKitCore {
-    umbrella "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/Sources/CTunnelKitCore/include"
-    export *
-}

@@ -1,4 +1,0 @@
-module SwiftyBeaver {
-    header "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/.build/arm64-apple-macosx/debug/SwiftyBeaver.build/SwiftyBeaver-Swift.h"
-    requires objc
-}

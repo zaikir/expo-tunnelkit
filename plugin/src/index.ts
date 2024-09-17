@@ -107,12 +107,10 @@ const withUpdatedPodfile: ConfigPlugin = (config) => {
   if (modulePath === '../') {
     modulePath = '../../';
   }
-  const podPath = path.join(modulePath, 'vendor', 'tunnelkit');
-  const newPodLine = `pod 'TunnelKit', :path => '${podPath}'`;
+  const newPodLine = `pod 'TunnelKit', :podspec => 'https://raw.githubusercontent.com/zaikir/tunnelkit/master/TunnelKit.podspec'`;
   const reactNativeLine = 'use_react_native!';
   const newTargetSnippet = `target '${NETWORK_EXTENSION_TARGET_NAME}' do
   ${newPodLine}
-  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
 
   return withPodfile(config, (newConfig) => {

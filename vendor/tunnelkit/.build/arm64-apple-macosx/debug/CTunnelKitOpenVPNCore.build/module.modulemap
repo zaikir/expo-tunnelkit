@@ -1,4 +1,0 @@
-module CTunnelKitOpenVPNCore {
-    umbrella "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/Sources/CTunnelKitOpenVPNCore/include"
-    export *
-}

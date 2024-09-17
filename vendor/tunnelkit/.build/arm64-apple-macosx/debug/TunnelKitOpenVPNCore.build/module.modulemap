@@ -1,4 +1,0 @@
-module TunnelKitOpenVPNCore {
-    header "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/.build/arm64-apple-macosx/debug/TunnelKitOpenVPNCore.build/TunnelKitOpenVPNCore-Swift.h"
-    requires objc
-}

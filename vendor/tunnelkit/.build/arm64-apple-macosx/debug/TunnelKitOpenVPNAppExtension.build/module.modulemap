@@ -1,4 +1,0 @@
-module TunnelKitOpenVPNAppExtension {
-    header "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/.build/arm64-apple-macosx/debug/TunnelKitOpenVPNAppExtension.build/TunnelKitOpenVPNAppExtension-Swift.h"
-    requires objc
-}
