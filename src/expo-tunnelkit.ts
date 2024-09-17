@@ -25,11 +25,8 @@ const NETWORK_EXTENSION_TARGET_NAME = 'TunnelKitNetworkExtension';
  *  configurationName: 'Your App VPN',
  * });
  */
-export async function setup({
-  tunnelIdentifier,
-  appGroup,
-  configurationName,
-}: SetupOptions) {
+async function setup(options?: SetupOptions) {
+  const { tunnelIdentifier, appGroup, configurationName } = options ?? {};
   const bundle =
     Constants.expoConfig?.ios?.bundleIdentifier ??
     Constants.manifest.ios.bundleIdentifier;
@@ -62,7 +59,7 @@ export async function setup({
  *  password: 'pass',
  * });
  */
-export async function connect({
+async function connect({
   config,
   hostname,
   username,
@@ -74,15 +71,25 @@ export async function connect({
 /**
  * Disconnect from the VPN server.
  */
-export async function disconnect() {
+async function disconnect() {
   await ExpoTunnelkitModule.disconnect();
 }
 
 /**
  * Get the current VPN status.
  */
-export function getVpnStatus() {
+function getVpnStatus() {
   return ExpoTunnelkitModule.getVpnStatus();
+}
+
+/**
+ * Get the current VPN status.
+ */
+async function requestBytesCount(): Promise<{
+  received: number;
+  sent: number;
+}> {
+  return await ExpoTunnelkitModule.requestBytesCount();
 }
 
 /**
@@ -91,8 +98,17 @@ export function getVpnStatus() {
  * @returns `Subscription` object that can be used to unsubscribe the listener
  * @example addVpnStatusListener((state) => console.log(state.VPNStatus));
  */
-export function addVpnStatusListener(
+function addVpnStatusListener(
   listener: (state: { status: VpnStatus }) => void,
 ) {
   return ExpoTunnelkitEmitter.addListener('VPNStatusDidChange', listener);
 }
+
+export const ExpoTunnelkit = {
+  setup,
+  connect,
+  disconnect,
+  addVpnStatusListener,
+  getVpnStatus,
+  requestBytesCount,
+};

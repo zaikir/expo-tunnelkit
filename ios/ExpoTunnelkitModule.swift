@@ -10,8 +10,10 @@ public class ExpoTunnelkitModule: Module {
 
   private var vpn: OpenVPNProvider?
 
+  private var previousStatus = "nil"
+
   private func ensureSetup() throws {
-    if self.keychain == nil || self.vpn == nil {
+    if keychain == nil || vpn == nil {
       throw Exception(
         name: "Invalid configuration",
         description: "Call setup method first"
@@ -20,7 +22,12 @@ public class ExpoTunnelkitModule: Module {
   }
 
   @objc private func VPNStatusDidChange(notification _: NSNotification) {
-    sendEvent("VPNStatusDidChange", ["status": vpn?.status.rawValue])
+    if (previousStatus == vpn?.status.rawValue) {
+      return
+    }
+    
+    previousStatus = vpn?.status.rawValue
+    sendEvent("VPNStatusDidChange", ["status": previousStatus])
   }
 
   //  MARK: Expo Module definition
@@ -51,6 +58,8 @@ public class ExpoTunnelkitModule: Module {
     AsyncFunction("connect") { (config: String, hostname: String, username: String, password: String, promise: Promise) in
       do {
         try ensureSetup()
+
+        self.previousStatus = "nil"
 
         let credentials = OpenVPN.Credentials(username, password)
         let configuration = try Configuration.make(configString: config, hostname: hostname)
@@ -95,10 +104,22 @@ public class ExpoTunnelkitModule: Module {
       promise.resolve()
     }
 
+    AsyncFunction("requestBytesCount") { (promise: Promise) in
+      try ensureSetup()
+
+      self.vpn!.requestBytesCount { info in
+        var result = [String: Any]()
+        result["received"] = info?.0 ?? 0
+        result["sent"] = info?.1 ?? 0
+
+        promise.resolve(result)
+      }
+    }
+
     Function("getVpnStatus") { () in
       try ensureSetup()
 
-      self.vpn!.status
+      return self.vpn!.status
     }
   }
 }
