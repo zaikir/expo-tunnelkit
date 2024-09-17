@@ -1,0 +1,4 @@
+module TunnelKitLZO {
+    umbrella "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/Sources/TunnelKitLZO/include"
+    export *
+}

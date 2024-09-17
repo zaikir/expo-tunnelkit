@@ -1,0 +1,4 @@
+module TunnelKitOpenVPNManager {
+    header "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/.build/arm64-apple-macosx/debug/TunnelKitOpenVPNManager.build/TunnelKitOpenVPNManager-Swift.h"
+    requires objc
+}

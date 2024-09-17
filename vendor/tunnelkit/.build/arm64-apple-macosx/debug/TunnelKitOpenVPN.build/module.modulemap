@@ -1,0 +1,4 @@
+module TunnelKitOpenVPN {
+    header "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/.build/arm64-apple-macosx/debug/TunnelKitOpenVPN.build/TunnelKitOpenVPN-Swift.h"
+    requires objc
+}

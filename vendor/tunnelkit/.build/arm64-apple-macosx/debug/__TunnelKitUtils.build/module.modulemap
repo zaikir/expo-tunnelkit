@@ -1,0 +1,4 @@
+module __TunnelKitUtils {
+    header "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/.build/arm64-apple-macosx/debug/__TunnelKitUtils.build/__TunnelKitUtils-Swift.h"
+    requires objc
+}

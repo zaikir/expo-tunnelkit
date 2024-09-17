@@ -1,0 +1,4 @@
+module CTunnelKitOpenVPNProtocol {
+    umbrella "/Users/kirillzaidulin/Documents/work/expo-tunnelkit/vendor/tunnelkit/Sources/CTunnelKitOpenVPNProtocol/include"
+    export *
+}

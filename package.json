@@ -1,6 +1,6 @@
 {
-  "name": "expo-tunnelkit",
-  "version": "0.2.1",
+  "name": "@kirz/expo-tunnelkit",
+  "version": "0.0.1",
   "description": "Expo module/wrapper for Tunnelkit VPN client library for Apple platforms.",
   "licenses": [
     {
@@ -28,12 +28,12 @@
     "expo-tunnelkit",
     "ExpoTunnelkit"
   ],
-  "repository": "https://github.com/sincerely-manny/expo-tunnelkit",
+  "repository": "https://github.com/zaikir/expo-tunnelkit",
   "bugs": {
-    "url": "https://github.com/sincerely-manny/expo-tunnelkit/issues"
+    "url": "https://github.com/zaikir/expo-tunnelkit/issues"
   },
-  "author": "Kirill Serebryannyy <sincerely.manny@gmail.com> (https://github.com/sincerely-manny)",
-  "homepage": "https://github.com/sincerely-manny/expo-tunnelkit#readme",
+  "author": "Kirill Zaidulin <zaidulinkirill@gmail.com> (https://github.com/zaikir)",
+  "homepage": "https://github.com/zaikir/expo-tunnelkit#readme",
   "dependencies": {
     "expo-constants": "^16.0.2"
   },
