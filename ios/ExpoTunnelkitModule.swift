@@ -10,7 +10,7 @@ public class ExpoTunnelkitModule: Module {
 
   private var vpn: OpenVPNProvider?
 
-  private var previousStatus = "nil"
+  private var previousStatus = "unknown"
 
   private func ensureSetup() throws {
     if keychain == nil || vpn == nil {
@@ -26,7 +26,7 @@ public class ExpoTunnelkitModule: Module {
       return
     }
     
-    previousStatus = vpn?.status.rawValue
+    previousStatus = vpn?.status.rawValue ?? "unknown"
     sendEvent("VPNStatusDidChange", ["status": previousStatus])
   }
 
@@ -52,14 +52,16 @@ public class ExpoTunnelkitModule: Module {
         object: nil
       )
 
-      promise.resolve()
+      self.vpn!.prepare {
+          promise.resolve()
+      }
     }
 
     AsyncFunction("connect") { (config: String, hostname: String, username: String, password: String, promise: Promise) in
       do {
         try ensureSetup()
 
-        self.previousStatus = "nil"
+        self.previousStatus = "unknown"
 
         let credentials = OpenVPN.Credentials(username, password)
         let configuration = try Configuration.make(configString: config, hostname: hostname)

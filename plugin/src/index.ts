@@ -107,7 +107,7 @@ const withUpdatedPodfile: ConfigPlugin = (config) => {
   if (modulePath === '../') {
     modulePath = '../../';
   }
-  const newPodLine = `pod 'TunnelKit', :podspec => 'https://raw.githubusercontent.com/zaikir/tunnelkit/master/TunnelKit.podspec'`;
+  const newPodLine = `pod 'TunnelKit', :podspec => 'https://raw.githubusercontent.com/zaikir/ios-openvpn/master/TunnelKit.podspec'`;
   const reactNativeLine = 'use_react_native!';
   const newTargetSnippet = `target '${NETWORK_EXTENSION_TARGET_NAME}' do
   ${newPodLine}

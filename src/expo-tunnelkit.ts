@@ -78,7 +78,7 @@ async function disconnect() {
 /**
  * Get the current VPN status.
  */
-function getVpnStatus() {
+function getVpnStatus(): VpnStatus {
   return ExpoTunnelkitModule.getVpnStatus();
 }
 
