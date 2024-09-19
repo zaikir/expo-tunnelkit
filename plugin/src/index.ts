@@ -111,6 +111,8 @@ const withUpdatedPodfile: ConfigPlugin = (config) => {
   const reactNativeLine = 'use_react_native!';
   const newTargetSnippet = `target '${NETWORK_EXTENSION_TARGET_NAME}' do
   ${newPodLine}
+
+  ${reactNativeLine}
 end`;
 
   return withPodfile(config, (newConfig) => {
