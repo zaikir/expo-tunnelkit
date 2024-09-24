@@ -112,7 +112,7 @@ const withUpdatedPodfile: ConfigPlugin = (config) => {
   const newTargetSnippet = `target '${NETWORK_EXTENSION_TARGET_NAME}' do
   ${newPodLine}
 
-  ${reactNativeLine}
+  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
 
   return withPodfile(config, (newConfig) => {
