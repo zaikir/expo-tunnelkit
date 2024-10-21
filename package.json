@@ -1,6 +1,6 @@
 {
   "name": "@kirz/expo-tunnelkit",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Expo module/wrapper for Tunnelkit VPN client library for Apple platforms.",
   "licenses": [
     {
