@@ -121,7 +121,7 @@ public class ExpoTunnelkitModule: Module {
     Function("getVpnStatus") { () in
       try ensureSetup()
 
-      return self.vpn!.status
+      return self.vpn!.status.rawValue
     }
   }
 }
