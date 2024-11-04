@@ -109,13 +109,13 @@ const withUpdatedPodfile: ConfigPlugin = (config) => {
   }
 
   const newPodLine = [
-    `  pod "TunnelKit/Protocols/OpenVPN", :podspec => 'https://raw.githubusercontent.com/zaikir/ios-openvpn/master/TunnelKit.podspec'`,
+    `pod "TunnelKit/Protocols/OpenVPN", :podspec => 'https://raw.githubusercontent.com/zaikir/ios-openvpn/master/TunnelKit.podspec'`,
     `  pod "TunnelKit/Extra/LZO", :podspec => 'https://raw.githubusercontent.com/zaikir/ios-openvpn/master/TunnelKit.podspec'`,
   ].join('\n');
 
   const reactNativeLine = 'use_react_native!';
   const newTargetSnippet = `target '${NETWORK_EXTENSION_TARGET_NAME}' do
-${newPodLine}
+  ${newPodLine}
 
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
