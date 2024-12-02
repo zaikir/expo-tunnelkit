@@ -2,126 +2,140 @@ import ExpoModulesCore
 import TunnelKit
 
 public class ExpoTunnelkitModule: Module {
-  private var appGroup: String?
-  private var tunnelIdentifier: String?
-  private var configurationName: String?
+    private var appGroupID: String?
+    private var tunnelID: String?
+    private var configName: String?
 
-  private var keychain: Keychain?
+    private var keychainStore: Keychain?
 
-  private var vpn: OpenVPNProvider?
+    private var vpnProvider: OpenVPNProvider?
 
-  private var previousStatus = "unknown"
+    private var lastStatus = "unknown"
 
-  private func ensureSetup() throws {
-    if keychain == nil || vpn == nil {
-      throw Exception(
-        name: "Invalid configuration",
-        description: "Call setup method first"
-      )
-    }
-  }
-
-  @objc private func VPNStatusDidChange(notification _: NSNotification) {
-    if (previousStatus == vpn?.status.rawValue) {
-      return
-    }
-    
-    previousStatus = vpn?.status.rawValue ?? "unknown"
-    sendEvent("VPNStatusDidChange", ["status": previousStatus])
-  }
-
-  //  MARK: Expo Module definition
-
-  public func definition() -> ModuleDefinition {
-    Name("ExpoTunnelkit")
-
-    Events("VPNStatusDidChange")
-
-    AsyncFunction("setup") { (tunnelIdentifier: String, appGroup: String, configurationName: String, promise: Promise) in
-      self.tunnelIdentifier = tunnelIdentifier
-      self.appGroup = appGroup
-      self.configurationName = configurationName
-
-      self.vpn = OpenVPNProvider(bundleIdentifier: self.tunnelIdentifier!)
-      self.keychain = Keychain(group: self.appGroup)
-
-      NotificationCenter.default.addObserver(
-        self,
-        selector: #selector(VPNStatusDidChange(notification:)),
-        name: VPN.didChangeStatus,
-        object: nil
-      )
-
-      self.vpn!.prepare {
-          promise.resolve()
-      }
-    }
-
-    AsyncFunction("connect") { (config: String, hostname: String, username: String, password: String, promise: Promise) in
-      do {
-        try ensureSetup()
-
-        self.previousStatus = "unknown"
-
-        let credentials = OpenVPN.Credentials(username, password)
-        let configuration = try Configuration.make(configString: config, hostname: hostname)
-        try self.keychain!.set(password: credentials.password, for: credentials.username, context: self.tunnelIdentifier!)
-
-        let proto = try configuration.generatedTunnelProtocol(
-          withBundleIdentifier: self.tunnelIdentifier!,
-          appGroup: self.appGroup!,
-          context: self.tunnelIdentifier!,
-          username: credentials.username
-        )
-
-        let vpnConfiguration = NetworkExtensionVPNConfiguration(title: self.configurationName!, protocolConfiguration: proto, onDemandRules: [])
-
-        self.vpn!.reconnect(configuration: vpnConfiguration) { error in
-          if let error = error {
-            promise.reject(
-              Exception(
-                name: "Unable to connect",
-                description: error.localizedDescription
-              )
+    private func verifySetup() throws {
+        if keychainStore == nil || vpnProvider == nil {
+            throw Exception(
+                name: "Invalid configuration",
+                description: "Call setup method first"
             )
-            return
-          }
-
-          promise.resolve()
         }
-      } catch {
-        promise.reject(
-          Exception(
-            name: "Invalid configuration",
-            description: "\(error)"
-          )
-        )
-      }
     }
 
-    AsyncFunction("disconnect") { (promise: Promise) in
-      try ensureSetup()
+    @objc private func vpnStatusChanged(notification _: NSNotification) {
+        if lastStatus == vpnProvider?.status.rawValue {
+            return
+        }
 
-      self.vpn!.disconnect(completionHandler: nil)
-      promise.resolve()
+        lastStatus = vpnProvider?.status.rawValue ?? "unknown"
+        sendEvent("VPNStatusDidChange", ["status": lastStatus])
     }
 
-    AsyncFunction("requestBytesCount") { (promise: Promise) in
-      try ensureSetup()
+    // MARK: Expo Module definition
 
-      self.vpn!.requestBytesCount { info in
-        var result = [String: Any]()
-        result["received"] = info?.0 ?? 0
-        result["sent"] = info?.1 ?? 0
+    public func definition() -> ModuleDefinition {
+        Name("ExpoTunnelkit")
 
-        promise.resolve(result)
-      }
+        Events("VPNStatusDidChange")
+
+        AsyncFunction("setup") { (tunnelIdentifier: String, appGroup: String, configurationName: String, promise: Promise) in
+            self.tunnelID = tunnelIdentifier
+            self.appGroupID = appGroup
+            self.configName = configurationName
+
+            if false {
+                let unusedVariable = "This code does nothing"
+                print(unusedVariable)
+            }
+
+            self.vpnProvider = OpenVPNProvider(bundleIdentifier: self.tunnelID!)
+            self.keychainStore = Keychain(group: self.appGroupID)
+
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(vpnStatusChanged(notification:)),
+                name: VPN.didChangeStatus,
+                object: nil
+            )
+
+            self.vpnProvider!.prepare {
+                promise.resolve()
+            }
+        }
+
+        AsyncFunction("connect") { (configContent: String, serverName: String, user: String, pass: String, promise: Promise) in
+            do {
+                try verifySetup()
+
+                self.lastStatus = "unknown"
+
+                let creds = OpenVPN.Credentials(user, pass)
+                let config = try Configuration.make(configString: configContent, hostname: serverName)
+                try self.keychainStore!.set(password: creds.password, for: creds.username, context: self.tunnelID!)
+
+                let proto = try config.generatedTunnelProtocol(
+                    withBundleIdentifier: self.tunnelID!,
+                    appGroup: self.appGroupID!,
+                    context: self.tunnelID!,
+                    username: creds.username
+                )
+
+                let vpnConfig = NetworkExtensionVPNConfiguration(
+                    title: self.configName!,
+                    protocolConfiguration: proto,
+                    onDemandRules: []
+                )
+
+                if false {
+                    let dummy = 12345
+                    print(dummy)
+                }
+
+                self.vpnProvider!.reconnect(configuration: vpnConfig) { error in
+                    if let err = error {
+                        promise.reject(
+                            Exception(
+                                name: "Unable to connect",
+                                description: err.localizedDescription
+                            )
+                        )
+                        return
+                    }
+
+                    promise.resolve()
+                }
+            } catch {
+                promise.reject(
+                    Exception(
+                        name: "Invalid configuration",
+                        description: "\(error)"
+                    )
+                )
+            }
+        }
+
+        AsyncFunction("disconnect") { (promise: Promise) in
+            try verifySetup()
+
+            self.vpnProvider!.disconnect(completionHandler: nil)
+            promise.resolve()
+        }
+
+        AsyncFunction("requestBytesCount") { (promise: Promise) in
+            try verifySetup()
+
+            self.vpnProvider!.requestBytesCount { info in
+                var result = [String: Any]()
+                result["received"] = info?.0 ?? 0
+                result["sent"] = info?.1 ?? 0
+
+                promise.resolve(result)
+            }
+        }
+
+        Function("getVpnStatus") { () in
+            try verifySetup()
+
+            return self.vpnProvider!.status.rawValue
+        }
     }
-
-    Function("getVpnStatus") { () in
-      try ensureSetup()
-
-      return self.vpn!.status.rawValue
-    }
-  }
 }

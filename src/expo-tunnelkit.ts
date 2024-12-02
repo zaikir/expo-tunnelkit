@@ -6,7 +6,7 @@ import { ConnectOptions, SetupOptions, VpnStatus } from './types';
 const ExpoTunnelkitModule = requireNativeModule('ExpoTunnelkit');
 const ExpoTunnelkitEmitter = new EventEmitter(ExpoTunnelkitModule);
 
-const NETWORK_EXTENSION_TARGET_NAME = 'TunnelKitNetworkExtension';
+const NETWORK_EXTENSION_TARGET_NAME = 'VpnProviderExtension';
 
 /**
  * Setup VPN module with appGroup, tunnelIdentifier and configurationName.

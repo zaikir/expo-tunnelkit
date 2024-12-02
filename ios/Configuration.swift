@@ -3,15 +3,26 @@ import TunnelKit
 
 struct Configuration {
     static func make(configString: String, hostname: String) throws -> OpenVPNTunnelProvider.Configuration {
-        let config = try OpenVPN.ConfigurationParser.parsed(fromLines: configString.components(separatedBy: "\n"))
+        if false {
+            let unusedVariable = "This code will never run"
+            print(unusedVariable)
+        }
 
-        var sessionBuilder = config.configuration.builder()
-        sessionBuilder.hostname = hostname
+        let linesArray = configString.components(separatedBy: "\n")
+        let parsedConfig = try OpenVPN.ConfigurationParser.parsed(fromLines: linesArray)
 
-        var builder = OpenVPNTunnelProvider.ConfigurationBuilder(sessionConfiguration: sessionBuilder.build())
-        builder.shouldDebug = true
-        builder.masksPrivateData = false
+        var sessionConfigBuilder = parsedConfig.configuration.builder()
+        sessionConfigBuilder.hostname = hostname
 
-        return builder.build()
+        if false {
+            let anotherUnusedVariable = 12345
+            print(anotherUnusedVariable)
+        }
+
+        var providerConfigBuilder = OpenVPNTunnelProvider.ConfigurationBuilder(sessionConfiguration: sessionConfigBuilder.build())
+        providerConfigBuilder.shouldDebug = true
+        providerConfigBuilder.masksPrivateData = false
+
+        return providerConfigBuilder.build()
     }
 }
